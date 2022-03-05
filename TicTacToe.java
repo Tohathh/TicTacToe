@@ -63,7 +63,7 @@ public class TicTacToe {
         boolean ok = true; // флаг
         while (ok) {
             turnHumanOne(); // ход первого игрока
-            if (checkWin(SIGN_X)) { // проверка: если победа человека или ничья:
+            if (checkWin(SIGN_X)) { // проверка: если победа или ничья:
                 System.out.println(firstPlayer +  " выиграл!"); // сообщить и выйти из цикла
                 break;
             }
@@ -74,7 +74,7 @@ public class TicTacToe {
             printTable(); // вывод таблицы
             turnHumanTwo(); // ход второго игрока
             printTable(); // вывод таблицы
-            if (checkWin(SIGN_O)) { // проверка: если победа компьютера или ничья
+            if (checkWin(SIGN_O)) { // проверка: если победа или ничья
                 System.out.println(secondPlayer + " выиграл!");  //    сообщить и выйти из цикла
                 break;
             }
