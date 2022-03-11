@@ -1,3 +1,5 @@
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class TicTacToe {
@@ -7,12 +9,20 @@ public class TicTacToe {
     String firstPlayer; // первый игрок
     String secondPlayer; // второй игрок
     char[][] table; //двумерный символьный массив, игровое поле
+    int victory1;
+    int defeat1;
+    int victory2;
+    int defeat2;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         new TicTacToe().game();
     }
     public TicTacToe() { // конструктор
         Scanner scanner = new Scanner(System.in);
+        int victory1 = 0;
+        int defeat1 = 0;
+        int victory2 = 0;
+        int defeat2 = 0;
         table = new char[3][3];
         boolean ok = false; // флаг
         System.out.print("Игрок №1 введите ваше имя: ");
@@ -56,7 +66,7 @@ public class TicTacToe {
             ok = true;
         }
     }
-    public void game() { // игровая логика
+    public void game() throws IOException { // игровая логика
         Scanner scanner = new Scanner(System.in);
         int x = 1;
         initTable(); // инициализация таблицы
@@ -64,7 +74,9 @@ public class TicTacToe {
         while (ok) {
             turnHumanOne(); // ход первого игрока
             if (checkWin(SIGN_X)) { // проверка: если победа или ничья:
-                System.out.println(firstPlayer +  " выиграл!"); // сообщить и выйти из цикла
+                System.out.println(firstPlayer + " выиграл!"); // сообщить и выйти из цикла
+                victory1 ++;
+                defeat2 ++;
                 break;
             }
             if (isTableFull()) {
@@ -76,6 +88,8 @@ public class TicTacToe {
             printTable(); // вывод таблицы
             if (checkWin(SIGN_O)) { // проверка: если победа или ничья
                 System.out.println(secondPlayer + " выиграл!");  //    сообщить и выйти из цикла
+                victory2 ++;
+                defeat1 ++;
                 break;
             }
             if (isTableFull()) {
@@ -90,6 +104,15 @@ public class TicTacToe {
             game();
         } else if (x == 1) {
             System.out.println("Конец игры.");
+            try(FileWriter writer = new FileWriter("notes.txt", false)){
+                writer.append('\n');
+                String text = firstPlayer + ":" + " Победы " + victory1 + ";" + " Поражения " + defeat1 + ";";
+                String text1 = secondPlayer + ":" + " Победы " + victory2 + ";" + " Поражения " + defeat2 + ";";
+                writer.write(text);
+                writer.append('\n');
+                writer.write(text1);
+                writer.append('\n');
+            }
         }
     }
     public void initTable() { //метод обеспечивает начальную инициализацию игровой таблицы, заполняя её ячейки «пустыми» символами
@@ -104,23 +127,23 @@ public class TicTacToe {
             System.out.println();
         }
     }
-    public void turnHumanOne() { // метод, который позволяет пользователю сделать ход
+    private void turnHumanOne() { // метод, который позволяет пользователю сделать ход
         Scanner scanner = new Scanner(System.in);
         boolean ok = false; // флаг
         int x, y;
         do {
-                System.out.print(firstPlayer + ", введите координаты X от 1 до 3: ");
-                x = scanner.nextInt() - 1;
-                System.out.print(firstPlayer + ", введите координаты Y от 1 до 3: ");
-                y = scanner.nextInt() - 1;
-                if (table[y][x] == SIGN_X || table[y][x] == SIGN_O) {
-                    System.out.println("Ячейка занята. Введите другие координаты!");
-                }
+            System.out.print(firstPlayer + ", введите координаты X от 1 до 3: ");
+            x = scanner.nextInt() - 1;
+            System.out.print(firstPlayer + ", введите координаты Y от 1 до 3: ");
+            y = scanner.nextInt() - 1;
+            if (table[y][x] == SIGN_X || table[y][x] == SIGN_O) {
+                System.out.println("Ячейка занята. Введите другие координаты!");
             }
-            while (!isCellValid(x, y)) ;
-            table[y][x] = SIGN_X;
+        }
+        while (!isCellValid(x, y)) ;
+        table[y][x] = SIGN_X;
     }
-    public void turnHumanTwo() { // метод, который позволяет пользователю сделать ход
+    private void turnHumanTwo() { // метод, который позволяет пользователю сделать ход
         Scanner scanner = new Scanner(System.in);
         int x, y;
         do {
@@ -134,14 +157,14 @@ public class TicTacToe {
         } while (!isCellValid(x, y));
         table[y][x] = SIGN_O;
     }
-    public boolean isCellValid(int x, int y) { // метод проверки валидности ячейки
+    private boolean isCellValid(int x, int y) { // метод проверки валидности ячейки
         if (x < 0 || y < 0 || x >= 3 || y >= 3) {
             System.out.println("Числа не из диапазона от 1 до 3! Повторите ввод!");
             return false;
         }
         return table[y][x] == SIGN_EMPTY;
     }
-    public boolean checkWin(char dot) { // метод проверки победы по горизонтали, вертикали и диагонали
+    private boolean checkWin(char dot) { // метод проверки победы по горизонтали, вертикали и диагонали
         for (int i = 0; i < 3; i++)
             if ((table[i][0] == dot && table[i][1] == dot &&
                     table[i][2] == dot) || (table[0][i] == dot && table[1][i] == dot && table[2][i] == dot))
@@ -151,7 +174,7 @@ public class TicTacToe {
             return true;
         return false;
     }
-    public boolean isTableFull() { // метод проверки на ничью
+    private boolean isTableFull() { // метод проверки на ничью
         for (int row = 0; row < 3; row++) // циклом  проходим по всем ячейкам игровой таблицы и, если они все заняты, возвращаем true
             for (int col = 0; col < 3; col++)
                 if (table[row][col] == SIGN_EMPTY)
