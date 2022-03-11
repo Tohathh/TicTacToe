@@ -105,13 +105,11 @@ public class TicTacToe {
         } else if (x == 1) {
             System.out.println("Конец игры.");
             try(FileWriter writer = new FileWriter("notes.txt", false)){
-                writer.append('\n');
                 String text = firstPlayer + ":" + " Победы " + victory1 + ";" + " Поражения " + defeat1 + ";";
                 String text1 = secondPlayer + ":" + " Победы " + victory2 + ";" + " Поражения " + defeat2 + ";";
                 writer.write(text);
                 writer.append('\n');
                 writer.write(text1);
-                writer.append('\n');
             }
         }
     }
